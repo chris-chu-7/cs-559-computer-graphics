@@ -2,7 +2,7 @@ function setup() {
     var date = new Date();
     var canvas = document.getElementById('myCanvas');
     var context = canvas.getContext('2d');
-
+    var slider = document.getElementById('slider');
 
     function draw() {
         var hours = date.getHours();
@@ -18,6 +18,7 @@ function setup() {
         }
 
         function circle(color) {
+            context.lineWidth = 6;
             context.strokeStyle = color;
             context.beginPath();
             context.arc(175, 175, 400, 0, Math.PI * 2, true);
@@ -38,18 +39,31 @@ function setup() {
             }
         }
 
+        function markers2(color) {
+            context.strokeStyle = color;
+            for (var i = 0; i < 12; i++) {
+                context.beginPath();
+                context.rotate(Math.PI / 6);
+                context.moveTo(300, 0);
+                context.lineTo(360, 0);
+                context.stroke();
+            }
+        }
+
         function secondHand(color) {
-            context.strokeStyle = 'orange';
+            context.strokeStyle = color;
+            context.rotate(slider.value);
             context.lineWidth = 6;
             context.beginPath();
             context.moveTo(-30, 0);
             context.lineTo(320, 0);
+
             context.stroke();
         }
 
         function minuteHand(color) {
-            context.strokeStyle = 'red';
-
+            context.strokeStyle = color;
+            context.rotate(slider.value / 60);
             context.lineWidth = 10;
             context.beginPath();
             context.moveTo(-20, 0);
@@ -59,11 +73,14 @@ function setup() {
         }
 
         function hourHand(color) {
-
+            context.strokeStyle = color;
+            context.rotate(slider.value / (3600));
+            context.lineWidth = 10;
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.lineTo(130, 0);
+            context.stroke();
         }
-
-
-
 
         var TCircle = mat3.create();
         mat3.fromTranslation(TCircle, [150, 150]);
@@ -71,28 +88,36 @@ function setup() {
         setCanvasTransform(TCircle);
         circle("blue");
 
-
         var TMarker = mat3.create();
         mat3.fromTranslation(TMarker, [170, 170]);
         mat3.multiply(TMarker, TCircle, TMarker);
         setCanvasTransform(TMarker);
         markers("green");
 
+        var Tmarker2 = mat3.create();
+        mat3.fromTranslation(Tmarker2, [150, 150]);
+        markers2("green");
+
 
         var TsecondHand = mat3.create();
-        mat3.rotate(TsecondHand, TsecondHand, seconds * (Math.PI / 30));
+        mat3.fromTranslation(TsecondHand, [180, 180]);
+        mat3.multiply(TsecondHand, TCircle, TsecondHand)
+        setCanvasTransform(TsecondHand);
         secondHand("orange");
 
         var TminuteHand = mat3.create();
-        mat3.rotate(TminuteHand, TminuteHand, minutes * (Math.PI / 30) + seconds * (Math.PI / (30 * 60)));
+        mat3.fromTranslation(TminuteHand, [180, 180]);
+        mat3.multiply(TminuteHand, TCircle, TminuteHand);
+        setCanvasTransform(TminuteHand);
         minuteHand("red");
 
-
-
-
+        var ThourHand = mat3.create();
+        mat3.fromTranslation(ThourHand, [180, 180]);
+        mat3.multiply(ThourHand, TCircle, ThourHand);
+        setCanvasTransform(ThourHand);
+        hourHand("blue");
     }
-
-
+    slider.addEventListener("input", draw);
     draw();
     window.requestAnimationFrame(time);
 }
