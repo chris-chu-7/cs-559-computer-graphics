@@ -4,15 +4,16 @@ function setup(){
     var slider = document.getElementById('path');
     slider.value = 0;
     
-    function drawCar(){
+    function drawCar(color){
+        context.fillStyle = color;
         context.beginPath();
-        context.rect(20, 20, 150, 100);
+        context.rect(20, 20, 60, 100);
         context.stroke();
         context.fill();
     }
 
     function draw(){
-        drawCar();
+        drawCar('rgb(255,20,147)');
     }
 
     draw();
