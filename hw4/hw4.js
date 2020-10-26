@@ -165,12 +165,12 @@ function setup(){
         circlePoint("blue");
 
         var Tblue_to_canvas = mat3.create();
-	    mat3.fromTranslation(Tblue_to_canvas,[275,750]);
+	    mat3.fromTranslation(Tblue_to_canvas,[200,900]);
        // mat3.scale(Tblue_to_canvas,Tblue_to_canvas,[150,-150]);
         //setCanvasTransform(Tblue_to_canvas);
-        mat3.scale(Tblue_to_canvas,Tblue_to_canvas,[200,-200]); // Flip the Y-axis
+        mat3.scale(Tblue_to_canvas,Tblue_to_canvas,[100,-200]); // Flip the Y-axis
 
-        drawTrajectory(0.0,1.0,100,C1,Tblue_to_canvas,"blue");
+        drawTrajectory(0.0,1.2,100,C1,Tblue_to_canvas,"blue");
 
     }
 
