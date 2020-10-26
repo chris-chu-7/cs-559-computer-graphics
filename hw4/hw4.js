@@ -148,8 +148,7 @@ function setup() {
         }
 
         var Ccomp = function(t) {
-            return C0(t);
-           /* if (t < 1) {
+            if (t < 1) {
                 var u = t;
                 return C0(u);
             } else if(t < 2){
@@ -158,7 +157,7 @@ function setup() {
             } else {
                 var u = t - 2.0;
                 return C2(u);
-            }*/
+            }
         }
         
         var Ccomp_tangent = function(t) {
