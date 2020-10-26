@@ -9,16 +9,23 @@ function setup(){
 	var p1=[1,1];
 	var d1=[-1,3];
 	var p2=[2,2];
-	var d2=[0,3];
+    var d2=[0,3];
+    var p3=[2,2];
+	var d3=[5,3];
 
     var P0 = [p0,d0,p1,d1]; // First two points and tangents
-	var P1 = [p1,d1,p2,d2]; // Last two points and tangents
+    var P1 = [p1,d1,p2,d2]; // Last two points and tangents
+    var P2 = [p2,d2,p3,d3];
 
     var C0 = function(t_) {return Cubic(Hermite,P0,t_);};
 	var C1 = function(t_) {return Cubic(Hermite,P1,t_);};
+    var C2 = function(t_) {return Cubic(Hermite,P2,t_);};
+
 
     var C0prime = function(t_) {return Cubic(HermiteDerivative,P0,t_);};
     var C1prime = function(t_) {return Cubic(HermiteDerivative,P1,t_);};
+    var C2prime = function(t_) {return Cubic(HermiteDerivative,P2,t_);};
+
     
     function setCanvasTransform(Tx) {
         context.setTransform(Tx[0], Tx[1], Tx[3], Tx[4], Tx[6], Tx[7]);
@@ -30,8 +37,8 @@ function setup(){
 
 	function lineToTx(loc,Tx)
 	{var res=vec2.create(); vec2.transformMat3(res,loc,Tx);
-		console.log("move res 0 " + res[0]);
-		console.log("move res 1 " + res[1]);
+		//console.log("move res 0 " + res[0]);
+		//console.log("move res 1 " + res[1]);
          context.lineTo(res[0],res[1]);
          //context.stroke();
         }
@@ -47,6 +54,7 @@ function setup(){
             return result;
         }
     function drawCar(color){
+        //console.log("Car is drawing successfully");
         context.fillStyle = color;
         context.beginPath();
         context.lineTo(10, 50);
@@ -90,9 +98,27 @@ function setup(){
 		-6*t*t+6*t,
 		3*t*t-2*t
             ];
+    }
+    
+    function drawObject(color,Tx) {
+        console.log("Car is drawing successfully");
+	    context.beginPath();
+	    context.fillStyle = color;
+	    moveToTx([-.05,-.05],Tx);
+	    lineToTx([-.05,.05],Tx);
+            lineToTx([.05,.05],Tx);
+      	    lineToTx([.1,0],Tx);
+	    lineToTx([.05,-.05],Tx);
+	    context.closePath();
+	    context.fill();
 	}
+	
 
     function drawTrajectory(t_begin,t_end,intervals,C,Tx,color) {
+        console.log(t_begin + " t_begin");
+        if(t_begin == 2){
+            console.log("T begin = 2 is recorded!");
+        }
 	    context.strokeStyle=color;
 	    context.beginPath();
             moveToTx(C(t_begin),Tx);
@@ -106,11 +132,7 @@ function setup(){
 
     function draw(){
 
-        //car
-        var car = mat3.create();
-        mat3.fromTranslation(car, [500, 900]);
-        setCanvasTransform(car);
-        drawCar('rgb(255,20,147)');
+       
 
         context.fillStyle = "green";
 
@@ -164,11 +186,19 @@ function setup(){
         setCanvasTransform(bluePoint);
         circlePoint("blue");
 
+
+
+
         var Tblue_to_canvas = mat3.create();
 	    mat3.fromTranslation(Tblue_to_canvas,[75,625]);
         mat3.scale(Tblue_to_canvas,Tblue_to_canvas,[200,120]); 
         drawTrajectory(0.0,1.0,100,C0,Tblue_to_canvas,"blue");
+        drawTrajectory(0.0,1.0,100,C1,Tblue_to_canvas,"red");
+        console.log("Transforming green now...")
+        drawTrajectory(0.0,1.0,100,C2,Tblue_to_canvas,"green");
 
+
+/*
         var Tred_to_canvas = mat3.create();
 	    mat3.fromTranslation(Tred_to_canvas,[475,390]);
         mat3.scale(Tred_to_canvas,Tred_to_canvas,[-200,120]); 
@@ -177,7 +207,18 @@ function setup(){
         var Tblue_to_canvas2 = mat3.create();
 	    mat3.fromTranslation(Tblue_to_canvas2,[-25,625]);
         mat3.scale(Tblue_to_canvas2,Tblue_to_canvas2,[300,-280]); 
-        drawTrajectory(0.0,1.0,100,C1,Tblue_to_canvas2,"blue");
+        drawTrajectory(0.0,1.0,100,C1,Tblue_to_canvas2,"blue");*/
+
+         //car
+         var car = mat3.create();
+         mat3.fromTranslation(car, [500, 900]);
+         setCanvasTransform(car);
+         mat3.scale(car,car,[300,-280]); 
+
+         drawObject("green",car);
+
+
+         //drawCar('rgb(255,20,147)');
 
 
     }
