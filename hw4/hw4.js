@@ -155,7 +155,7 @@ function setup() {
         }
         context.stroke();
     }
-    
+
     var Ccomp = function(t) {
         if (t<1){
     var u = t;
@@ -164,6 +164,16 @@ function setup() {
     var u = t-1.0;
     return C1(u);
         }          
+}
+
+var Ccomp_tangent = function(t) {
+    if (t<1){
+var u = t;
+return C0prime(u);
+    } else {
+var u = t-1.0;
+return C1prime(u);
+    }          
 }
 
 
