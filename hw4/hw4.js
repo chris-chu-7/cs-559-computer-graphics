@@ -173,11 +173,9 @@ function setup(){
         drawTrajectory(0.0,1.0,100,C1,Tblue_to_canvas,"blue");
 
         var Tred_to_canvas = mat3.create();
-	    mat3.fromTranslation(Tred_to_canvas,[200,510]);
-       // mat3.scale(Tblue_to_canvas,Tblue_to_canvas,[150,-150]);
-        //setCanvasTransform(Tblue_to_canvas);
-        mat3.scale(Tred_to_canvas,Tred_to_canvas,[-200,120]); // Flip the Y-axis
+	    mat3.fromTranslation(Tred_to_canvas,[475,390]);
 
+        mat3.scale(Tred_to_canvas,Tred_to_canvas,[-200,120]); // Flip the Y-axis
         drawTrajectory(0.0,1.0,100,C1,Tred_to_canvas,"red");
 
     }
