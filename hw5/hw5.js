@@ -294,6 +294,7 @@ function setup() {
     context = cameraContext;
     draw3DAxes("grey",tVP_PROJ_VIEW_Camera,100.0);
 
+    /*
     //draw a cube now.
     var boxVertices = 
     [
@@ -368,8 +369,12 @@ function setup() {
 
     ];
 
+    var gl = cameraCanvas.getContext('webgl');
+    var boxIndexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
     console.log(boxVertices);
-    console.log(boxIndices);
+    console.log(boxIndices);*/
 
 
 
