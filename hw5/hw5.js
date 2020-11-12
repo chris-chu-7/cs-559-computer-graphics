@@ -30,8 +30,17 @@ function setup() {
             context.lineTo(res[0], res[1]);
         }
 
-        function drawObject(color, TxU, scale){
+        function drawRocket(color, TxU, scale){
+            var Tx = mat4.clone(TxU);
+            mat4.scale(Tx, Tx, [scale, scale, scale]);
+            context.beginPath();
+            context.strokeStyle = color;
+            moveToTx([0, 0.5, 0.5], Tx);
+            lineToTx([0, 2, 1], Tx);
+            moveToTx([0, 2, 1], Tx);
+            lineToTx([0.5, 1, -1], Tx);
 
+            context.stroke();
         }
 
         function drawCamera(color, TxU, scale){
@@ -292,7 +301,13 @@ function setup() {
     mat4.multiply(tVP_PROJ_VIEW_MOD2_Observer, tVP_PROJ_VIEW_MOD2_Observer, TlookFromCamera);
 
     context = cameraContext;
+    drawRocket("purple",tVP_PROJ_VIEW_Camera,100.0);
     draw3DAxes("grey",tVP_PROJ_VIEW_Camera,100.0);
+
+    context = observerContext;
+    drawCamera("blue",tVP_PROJ_VIEW_MOD2_Observer,10.0); 
+    drawRocket("purple",tVP_PROJ_VIEW_MOD1_Observer,100.0);
+    draw3DAxes("grey",tVP_PROJ_VIEW_MOD1_Observer,100.0);
 
     /*
     //draw a cube now.
