@@ -15,8 +15,8 @@ function setup() {
         observerCanvas.width = observerCanvas.width;
         cameraCanvas.width = cameraCanvas.width;
 
-        var tParam = curveSlider.value * 0.01;
-        var viewAngle = rotateSlider.value * 0.005 * Math.PI;
+        var tParam = curveSlider.value * 0.015;
+        var viewAngle = rotateSlider.value * 0.01 * Math.PI;
 
         function moveToTx(loc,Tx){
             var res = vec3.create();
@@ -31,16 +31,7 @@ function setup() {
         }
 
         function drawRocket(color, TxU, scale){
-            var Tx = mat4.clone(TxU);
-            mat4.scale(Tx, Tx, [scale, scale, scale]);
-            context.beginPath();
-            context.strokeStyle = color;
-            moveToTx([0, 0.5, 0.5], Tx);
-            lineToTx([0, 2, 1], Tx);
-            moveToTx([0, 2, 1], Tx);
-            lineToTx([0.5, 1, -1], Tx);
-
-            context.stroke();
+        
         }
 
         function drawCamera(color, TxU, scale){
@@ -180,29 +171,39 @@ function setup() {
             return result;
         }
 
-        var p0=[0,0,0];
-	var d0=[100,300,0];
-	var p1=[100,100,0];
-	var d1=[-100,300,0];
-	var p2=[200,200,0];
-	var d2=[0,300,0];
+    var p0=[0,0,100];
+	var d0=[50,100,100];
+	var p1=[80,170,-50];
+	var d1=[-200,375,25];
+	var p2=[200,100,-25];
+    var d2=[0,150,200];
+    var p3=[100, 100, 100]; 
+    var d3=[55, 35, 75];
 
 	var P0 = [p0,d0,p1,d1]; // First two points and tangents
-	var P1 = [p1,d1,p2,d2]; // Last two points and tangents
+    var P1 = [p1,d1,p2,d2]; // Last two points and tangents
+    var P2 = [p2, d2, p3, d3];
 
 	var C0 = function(t_) {return Cubic(Hermite,P0,t_);};
-	var C1 = function(t_) {return Cubic(Hermite,P1,t_);};
+    var C1 = function(t_) {return Cubic(Hermite,P1,t_);};
+    var C2 = function(t_) {return Cubic(Hermite,P2,t_);};
+
 
 	var C0prime = function(t_) {return Cubic(HermiteDerivative,P0,t_);};
-	var C1prime = function(t_) {return Cubic(HermiteDerivative,P1,t_);};
+    var C1prime = function(t_) {return Cubic(HermiteDerivative,P1,t_);};
+    var C2prime = function(t_) {return Cubic(HermiteDerivative,P2,t_);};
+
       
     var Ccomp = function(t) {
         if (t<1){
             var u = t;
             return C0(u);
-        } else {
+        } else if(t < 2) {
             var u = t-1.0;
             return C1(u);
+        } else {
+            var u = t-2.0;
+            return C2(u);
         }          
 	}
 
@@ -210,9 +211,12 @@ function setup() {
         if (t<1){
             var u = t;
             return C0prime(u);
-        } else {
+        } else if(t < 2) {
             var u = t-1.0;
             return C1prime(u);
+        } else {
+            var u = t-2.0;
+            return C2prime(u);
         }          
 	}
 
@@ -301,102 +305,22 @@ function setup() {
     mat4.multiply(tVP_PROJ_VIEW_MOD2_Observer, tVP_PROJ_VIEW_MOD2_Observer, TlookFromCamera);
 
     context = cameraContext;
+    drawTrajectory(0.0,1.0,100,C0,tVP_PROJ_VIEW_Observer,"red");
+    drawTrajectory(0.0,1.0,100,C1,tVP_PROJ_VIEW_Observer,"orange");
+    drawTrajectory(0.0,1.0,100,C2,tVP_PROJ_VIEW_Observer,"green");
+
     drawRocket("purple",tVP_PROJ_VIEW_Camera,100.0);
     draw3DAxes("grey",tVP_PROJ_VIEW_Camera,100.0);
 
     context = observerContext;
-    drawCamera("blue",tVP_PROJ_VIEW_MOD2_Observer,10.0); 
+    drawTrajectory(0.0,1.0,100,C0,tVP_PROJ_VIEW_Observer,"red");
+    drawTrajectory(0.0,1.0,100,C1,tVP_PROJ_VIEW_Observer,"orange");
+    drawTrajectory(0.0,1.0,100,C2,tVP_PROJ_VIEW_Observer,"green");
     drawRocket("purple",tVP_PROJ_VIEW_MOD1_Observer,100.0);
+    drawCamera("blue",tVP_PROJ_VIEW_MOD2_Observer,10.0); 
     draw3DAxes("grey",tVP_PROJ_VIEW_MOD1_Observer,100.0);
 
-    /*
-    //draw a cube now.
-    var boxVertices = 
-    [
-        //Top
-        -1.0, 1.0, -1.0, 0.1, 0.1, 0.9,
-        -1.0, 1.0, 1.0, 0.1, 0.1, 0.9,
-        1.0, 1.0, 1.0, 0.1, 0.1, 0.9,
-        1.0, 1.0, -1.0, 0.1, 0.1, 0.9,
 
-        //Left
-        -1.0, 1.0, 1.0, 0.2, 0.2, 0.8,
-        -1.0, -1.0, 1.0, 0.2, 0.2, 0.8,
-        -1.0, -1.0, -1.0, 0.2, 0.2, 0.8,
-        -1.0, 1.0, -1.0, 0.2, 0.2, 0.8,
-        
-        //Right
-        1.0, 1.0, 1.0, 0.3, 0.3, 0.7,
-        1.0, -1.0, 1.0, 0.3, 0.3, 0.7,
-        1.0, -1.0, -1.0, 0.3, 0.3, 0.7,
-        1.0, 1.0, -1.0, 0.3, 0.3, 0.7,
-
-
-        //Front
-        1.0, 1.0, 1.0, 0.4, 0.4, 0.6,
-        1.0, -1.0, 1.0, 0.4, 0.4, 0.6,
-        -1.0, -1.0, 1.0, 0.4, 0.4, 0.6,
-        -1.0, 1.0, 1.0, 0.4, 0.4, 0.6,
-
-
-        //Back
-        1.0, 1.0, -1.0, 0.5, 0.5, 0.5,
-        1.0, -1.0, -1.0, 0.5, 0.5, 0.5,
-        -1.0, -1.0, -1.0, 0.5, 0.5, 0.5,
-        -1.0, 1.0, -1.0, 0.5, 0.5, 0.5,
-
-
-
-        //Bottom
-        -1.0, -1.0, -1.0, 0.6, 0.6, 0.4,
-        -1.0, -1.0, 1.0, 0.6, 0.6, 0.4,
-        1.0, -1.0, 1.0, 0.6, 0.6, 0.4,
-        1.0, -1.0, -1.0, 0.6, 0.6, 0.4,
-
-    ];
-
-    var boxIndices = 
-    [   
-        //top
-        0, 1, 2,
-        0, 2, 3,
-
-        //left
-        5, 4, 6,
-        6, 4, 7,
-
-        //right
-        8, 9, 10,
-        8, 10, 11,
-
-        //front
-        13, 12, 14, 
-        15, 14, 12, 
-
-        //back
-        16, 17, 18, 
-        16, 18, 19,
-
-        //bottom
-        21, 20, 22,
-        22, 20, 23
-
-
-    ];
-
-    var gl = cameraCanvas.getContext('webgl');
-    var boxIndexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
-    console.log(boxVertices);
-    console.log(boxIndices);*/
-
-
-
-
-
-
-    
 
 
     }
