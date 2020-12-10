@@ -35,12 +35,15 @@ function start() {
     console.log("Beginning of Hw 7.");
     var hor = document.getElementById('hor');
     hor.value = 0;
-    var ver = document.getElementById('slider2');
+    var ver = document.getElementById('ver');
     ver.value = 0;
 
 
 
     function draw(){
+        var hor_angle = hor.value*0.01*Math.PI;
+        var ver_angle = ver.value*0.01*Math.PI;
+        
 
     }
 
@@ -51,3 +54,4 @@ function start() {
 }
 
 window.onload = start;
+
