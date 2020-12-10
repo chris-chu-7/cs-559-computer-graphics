@@ -33,6 +33,21 @@
 
 function start() {
     console.log("Beginning of Hw 7.");
+    var hor = document.getElementById('hor');
+    hor.value = 0;
+    var ver = document.getElementById('slider2');
+    ver.value = 0;
+
+
+
+    function draw(){
+
+    }
+
+    hor.addEventListener("input", draw);
+    ver.addEventListener("input", draw);
+
+
 }
 
 window.onload = start;
