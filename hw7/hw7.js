@@ -1,5 +1,5 @@
 //Assignment 7 Requirements: 
-
+//https://graphics.cs.wisc.edu/WP/cs559-fall2020/2020/11/29/programming-assignment-7/
 /* 
 * Write a Vertex Shader
 * Write a Fragment Shader
@@ -30,3 +30,9 @@
 * LINK: 
 *   - https://jsbin.com/hagakel/edit?html,js,output
 */
+
+function start() {
+    console.log("Beginning of Hw 7.");
+}
+
+window.onload = start;
