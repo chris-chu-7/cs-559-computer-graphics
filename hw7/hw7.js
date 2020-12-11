@@ -32,19 +32,50 @@
 */
 
 function start() {
-    console.log("Beginning of Hw 7.");
+
+    //initialize graphics libraries
+    var canvas = document.getElementById("mycanvas");
+    var gl = canvas.getContext("webgl");
+
+    //initialize the slider and their values 
     var hor = document.getElementById('hor');
     hor.value = 0;
     var ver = document.getElementById('ver');
     ver.value = 0;
+
+    //read shader source
+    var vertexSource = document.getElementById("vertexShader").text;
+    var fragmentSource = document.getElementById("fragmentShader").text;
+
+    //compile vertex shader
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, vertexSource);
+    gl.compileShader(vertexShader);
+    if(!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)){
+        alert(gl.getShaderInfoLog(vertexShader));
+        return null;
+    }
+
+    //compile fragment shader
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, fragmentSource);
+    gl.compileShader(fragmentShader);
+    if(!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)){
+        alert(gl.getShaderInfoLog(fragmentShader));
+        return null;
+    }
+
+    //attach shaders and link
+
+
+
+
 
 
 
     function draw(){
         var hor_angle = hor.value*0.01*Math.PI;
         var ver_angle = ver.value*0.01*Math.PI;
-        
-
     }
 
     hor.addEventListener("input", draw);
@@ -54,4 +85,5 @@ function start() {
 }
 
 window.onload = start;
+
 
