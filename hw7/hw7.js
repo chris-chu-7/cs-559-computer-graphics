@@ -100,6 +100,25 @@ function start() {
            1, 0, 1,   1, 1, 0,   1, 1, 1,   0, 0, 1,
            1, 1, 1,   0, 0, 1,   1, 1, 0,   0, 1, 0,
            0, 1, 1,   1, 1, 0,   1, 0, 1,   0, 0, 0 ]);
+
+
+    //vertex normals
+    var vertexNormals = new Float32Array(
+        [  0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1, 
+           1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0, 
+           0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0, 
+          -1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, 
+           0,-1, 0,   0,-1, 0,   0,-1, 0,   0,-1, 0, 
+           0, 0,-1,   0, 0,-1,   0, 0,-1,   0, 0,-1  ]);
+
+      // vertex texture coordinates
+      var vertexTextureCoords = new Float32Array(
+        [  0, 0,   1, 0,   1, 1,   0, 1,
+           1, 0,   1, 1,   0, 1,   0, 0,
+           0, 1,   0, 0,   1, 0,   1, 1,
+           0, 0,   1, 0,   1, 1,   0, 1,
+           1, 1,   0, 1,   0, 0,   1, 0,
+           1, 1,   0, 1,   0, 0,   1, 0 ]);
     
     // element index array
     var triangleIndices = new Uint8Array(
@@ -128,7 +147,58 @@ function start() {
     // a buffer for indices
     var indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, triangleIndices, gl.STATIC_DRAW);    
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, triangleIndices, gl.STATIC_DRAW); 
+    
+     // a buffer for textures
+     var textureBuffer = gl.createBuffer();
+     gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+     gl.bufferData(gl.ARRAY_BUFFER, vertexTextureCoords, gl.STATIC_DRAW);
+     textureBuffer.itemSize = 2;
+     textureBuffer.numItems = 24;
+
+     var triangleNormalBuffer = gl.createBuffer();
+     gl.bindBuffer(gl.ARRAY_BUFFER, triangleNormalBuffer);
+     gl.bufferData(gl.ARRAY_BUFFER, vertexNormals, gl.STATIC_DRAW);
+     triangleNormalBuffer.itemSize = 3;
+     triangleNormalBuffer.numItems = 24;
+
+
+     var texture1 = gl.createTexture();
+     gl.activeTexture(gl.TEXTURE0);
+     gl.bindTexture(gl.TEXTURE_2D, texture1);
+     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+     var image1 = new Image();
+ 
+     var texture2 = gl.createTexture();
+     gl.activeTexture(gl.TEXTURE1);
+     gl.bindTexture(gl.TEXTURE_2D, texture2);
+     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+     var image2 = new Image();
+
+     
+    function loadTexture(image,texture)
+    {
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
+    }    
+
+    function initTextureThenDraw()
+    {
+      image1.onload = function() { loadTexture(image1,texture1); };
+      image1.crossOrigin = "anonymous";
+      image1.src = "https://www.telegraph.co.uk/content/dam/news/2016/09/08/107667228_beech-tree-NEWS_trans_NvBQzQNjv4BqplGOf-dgG3z4gg9owgQTXEmhb5tXCQRHAvHRWfzHzHk.jpg";
+
+      image2.onload = function() { loadTexture(image2,texture2); };
+      image2.crossOrigin = "anonymous";
+      image2.src = "https://www.telegraph.co.uk/content/dam/news/2016/09/08/107667228_beech-tree-NEWS_trans_NvBQzQNjv4BqplGOf-dgG3z4gg9owgQTXEmhb5tXCQRHAvHRWfzHzHk.jpg";
+
+      window.setTimeout(draw,200);
+    }
+
+
 
     // Scene (re-)draw routine
     function draw() {
@@ -152,9 +222,12 @@ function start() {
         var tProjection = mat4.create();
         mat4.perspective(tProjection,Math.PI/4,1,10,1000);
 	
+        var tMV = mat4.create();
+        var tMVn = mat3.create();
         var tMVP = mat4.create();
-        mat4.multiply(tMVP,camera,tModel); // "modelView" matrix
-        mat4.multiply(tMVP,tProjection,tMVP);
+        mat4.multiply(tMV,camera,tModel); // "modelView" matrix
+        mat3.normalFromMat4(tMVn,tMV);
+        mat4.multiply(tMVP,tProjection,tMV);
 	
         // Clear screen, prepare for rendering
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -162,14 +235,29 @@ function start() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
         // Set up uniforms & attributes
+        gl.uniformMatrix4fv(shaderProgram.MVmatrix,false,tMV);
+        gl.uniformMatrix3fv(shaderProgram.MVNormalmatrix,false,tMVn);
         gl.uniformMatrix4fv(shaderProgram.MVPmatrix,false,tMVP);
         
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-        gl.vertexAttribPointer(shaderProgram.ColorAttribute, colorBuffer.itemSize,
-			       gl.FLOAT,false, 0, 0);
         gl.bindBuffer(gl.ARRAY_BUFFER, trianglePosBuffer);
         gl.vertexAttribPointer(shaderProgram.PositionAttribute, trianglePosBuffer.itemSize,
-			       gl.FLOAT, false, 0, 0);
+          gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, triangleNormalBuffer);
+        gl.vertexAttribPointer(shaderProgram.NormalAttribute, triangleNormalBuffer.itemSize,
+          gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.vertexAttribPointer(shaderProgram.ColorAttribute, colorBuffer.itemSize,
+          gl.FLOAT,false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+        gl.vertexAttribPointer(shaderProgram.texcoordAttribute, textureBuffer.itemSize,
+          gl.FLOAT, false, 0, 0);
+
+          gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture1);
+       // gl.activeTexture(gl.TEXTURE1);
+        //gl.bindTexture(gl.TEXTURE_2D, texture2);
+
+        
 
 	// Do the drawing
         gl.drawElements(gl.TRIANGLES, triangleIndices.length, gl.UNSIGNED_BYTE, 0);
