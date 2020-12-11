@@ -1,24 +1,24 @@
 //Assignment 7 Requirements: 
 
 /* 
-* Write a Vertex Shader
-* Write a Fragment Shader
-* Compile and link these Shaders
+* Write a Vertex Shader (yes)
+* Write a Fragment Shader (yes)
+* Compile and link these Shaders (yes)
 * Define your own vertex attributes
-*   - Pointers Query the data
-*   - Defining Associated Data
-*   - Dispatch data to GPU
-*   - Any other necessary operation
-*   - Define geometry via trangles/shapes 
+*   - Pointers Query the data (yes)
+*   - Defining Associated Data (yes)
+*   - Dispatch data to GPU (yes) 
+*   - Any other necessary operation (yes)
+*   - Define geometry via trangles/shapes  (yes) 
     and buffer data to the GPU
 *   - Get all the transform into uniforms
 *   - Load Texture Images
-*   - Use Z-Buffer Visibility mechanism
-*   - Polyhedral Nonflat object please!
+*   - Use Z-Buffer Visibility mechanism (yes)
+*   - Polyhedral Nonflat object please! (yes)
 *   - Use diffuse/specular shading. 
 *   - Some way to change the scene rather than just
     -rotation.
-*   - Spin a camera, and properly place this camera
+*   - Spin a camera, and properly place this camera (yes)
 * BONUS:  
 *   - Non-trivial lighting + texturing 
 *   - Model objects
@@ -62,8 +62,12 @@ function start() {
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
     gl.linkProgram(shaderProgram);
+
     if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-	alert("Could not initialize shaders"); }
+        alert("Could not initialize shader"); 
+    }
+
+
     gl.useProgram(shaderProgram);	    
     
     // with the vertex shader, we need to pass it positions
