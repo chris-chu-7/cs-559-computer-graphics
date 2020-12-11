@@ -11,7 +11,7 @@
 *   - Any other necessary operation (yes)
 *   - Define geometry via trangles/shapes  (yes) 
     and buffer data to the GPU
-*   - Get all the transform into uniforms
+*   - Get all the transform into uniforms (yes)
 *   - Load Texture Images
 *   - Use Z-Buffer Visibility mechanism (yes)
 *   - Polyhedral Nonflat object please! (yes)
