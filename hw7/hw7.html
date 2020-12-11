@@ -12,8 +12,8 @@
       uniform mat4 uMVP;
 
       void main(void) {
-        gl_Position = uMVP * vec4(vPosition, 1.0);
-	    fColor = vColor;
+        gl_Position = uMVP *vec4(vPosition, 1.0);
+        fColor = vColor;
       }
     </script>
 
@@ -22,7 +22,7 @@
       varying vec3 fColor;
 
       void main(void) {
-	     gl_FragColor = vec4(fColor, 2.0);
+         gl_FragColor = vec4(fColor, 2.0);
       }
     </script>
 
