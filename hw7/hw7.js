@@ -1,3 +1,32 @@
+//Assignment 7 Requirements: 
+
+/* 
+* Write a Vertex Shader
+* Write a Fragment Shader
+* Compile and link these Shaders
+* Define your own vertex attributes
+*   - Pointers Query the data
+*   - Defining Associated Data
+*   - Dispatch data to GPU
+*   - Any other necessary operation
+*   - Define geometry via trangles/shapes 
+    and buffer data to the GPU
+*   - Get all the transform into uniforms
+*   - Load Texture Images
+*   - Use Z-Buffer Visibility mechanism
+*   - Polyhedral Nonflat object please!
+*   - Use diffuse/specular shading. 
+*   - Some way to change the scene rather than just
+    -rotation.
+*   - Spin a camera, and properly place this camera
+* BONUS:  
+*   - Non-trivial lighting + texturing 
+*   - Model objects
+*   - Multiple textures
+*   - Comple objects
+*   - Interesting camera motion*/
+
+
 function start() {
 
     // Get canvas, WebGL context
@@ -5,10 +34,10 @@ function start() {
     var gl = canvas.getContext("webgl");
 
     // Sliders at center
-    var slider1 = document.getElementById('slider1');
-    slider1.value = 0;
-    var slider2 = document.getElementById('slider2');
-    slider2.value = 0;
+    var hor = document.getElementById('slider1');
+    hor.value = 0;
+    var ver = document.getElementById('slider2');
+    ver.value = 0;
 
     // Read shader source
     var vertexSource = document.getElementById("vertexShader").text;
@@ -61,12 +90,12 @@ function start() {
 
     // vertex colors
     var vertexColors = new Float32Array(
-        [  0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1,
-           1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0,
-           0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0,
-           1, 1, 0,   1, 1, 0,   1, 1, 0,   1, 1, 0,
-           1, 0, 1,   1, 0, 1,   1, 0, 1,   1, 0, 1,
-           0, 1, 1,   0, 1, 1,   0, 1, 1,   0, 1, 1 ]);
+        [  1, 1, 0,   1, 0, 1,   0, 0, 1,   0, 0, 1,
+           1, 0, 0,   0, 0, 0,   1, 1, 1,   1, 0, 0,
+           0, 0, 1,   1, 0, 1,   0, 1, 0,   0, 0, 0,
+           1, 0, 1,   1, 1, 0,   1, 1, 1,   0, 0, 1,
+           1, 1, 1,   0, 0, 1,   1, 1, 0,   0, 1, 0,
+           0, 1, 1,   1, 1, 0,   1, 0, 1,   0, 0, 0 ]);
     
     // element index array
     var triangleIndices = new Uint8Array(
@@ -101,8 +130,8 @@ function start() {
     function draw() {
 	
         // Translate slider values to angles in the [-pi,pi] interval
-        var angle1 = slider1.value*0.01*Math.PI;
-        var angle2 = slider2.value*0.01*Math.PI;
+        var angle1 = hor.value*0.01*Math.PI;
+        var angle2 = ver.value*0.01*Math.PI;
 	
         // Circle around the y-axis
         var eye = [800*Math.sin(angle1),150.0,800.0*Math.cos(angle1)];
@@ -113,14 +142,14 @@ function start() {
         mat4.fromScaling(tModel,[100,100,100]);
         mat4.rotate(tModel,tModel,angle2,[1,1,1]);
 	
-        var tCamera = mat4.create();
-        mat4.lookAt(tCamera, eye, target, up);      
+        var camera = mat4.create();
+        mat4.lookAt(camera, eye, target, up);      
 
         var tProjection = mat4.create();
         mat4.perspective(tProjection,Math.PI/4,1,10,1000);
 	
         var tMVP = mat4.create();
-        mat4.multiply(tMVP,tCamera,tModel); // "modelView" matrix
+        mat4.multiply(tMVP,camera,tModel); // "modelView" matrix
         mat4.multiply(tMVP,tProjection,tMVP);
 	
         // Clear screen, prepare for rendering
@@ -143,8 +172,8 @@ function start() {
 
     }
 
-    slider1.addEventListener("input",draw);
-    slider2.addEventListener("input",draw);
+    hor.addEventListener("input",draw);
+    ver.addEventListener("input",draw);
     draw();
 }
 
