@@ -1,69 +1,36 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>
-            CS 559 Homework 7
-        </title>
-    </head>
+  <head>
+    <title>Chris Chu HW7</title>
+  </head>
 
-    <script id = "vertexShader" type = "not-js">
-        precision highp float;
-        attribute vec3 position;
-        attribute vec3 normal;
-        uniform mat3 normalMatrix;
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        varying vec3 fNormal;
-        varying vec3 fPosition;
+  <body>
+    <script id="vertexShader" type="not-js">
+      attribute vec3 vPosition;
+      attribute vec3 vColor;
+      varying vec3 fColor;
+      uniform mat4 uMVP;
 
-        void main()
-        {
-            fNormal = normalize(normalMatrix * normal);
-            vec4 pos = modelViewMatrix * vec4(position, 1.0);
-            fPosition = pos.xyz;
-            gl_Position = projectionMatrix * pos;
-        }
+      void main(void) {
+        gl_Position = uMVP * vec4(vPosition, 1.0);
+	    fColor = vColor;
+      }
     </script>
 
-    <script id = "fragmentShader" type = "not-js">
-        precision highp float;
-        uniform float time;
-        uniform vec2 resolution;
-        varying vec3 fPosition;
-        varying vec3 fNormal;
+    <script id="fragmentShader" type="not-js">
+      precision highp float;
+      varying vec3 fColor;
 
-        const float ambient_coeff = 0.25;
-        const float specular_coeff = 0.88;
-        const float specular_exp = 10.0;
-
-        const vec3 light_direction = vec3(5.0, 0.0, 5.0);
-
-        const vec3 lightColor = vec3(1.0, 1.0, 1.0);
-        const vec3 object_color = vec3(4.0, 0.0, 4.0);
-
-        void main()
-        {
-        
-            float angle = 10.0 * time;
-            vec3 lightV2     = vec3(sin(angle),-0.01,cos(angle));
-            
-            vec3 nld = normalize(light_direction);
-            vec3 nfn = normalize(fNormal);
-            vec3 fpn = normalize(-fPosition);
-            vec3 h = normalize(fpn + nld);
-            vec3 ambient_color = ambient_coeff * object_color;
-            vec3 specular_color = specular_coeff * pow(max(0.0, dot(nfn,h)), specular_exp) * lightColor;
-            
-            
-            gl_FragColor = vec4(ambient_color * specular_color * lightV2, 1.0);
-        }
+      void main(void) {
+	     gl_FragColor = vec4(fColor, 2.0);
+      }
     </script>
 
-    <canvas id = "mycanvas" width = "750" height = "750"></canvas>
+    <canvas id="mycanvas" width="500" height="500"></canvas>
     <br>
-    <input id = "hor" type="range" min="-100" max = "100"/>
-    <input id = "ver" type="range" min="-100" max = "100"/>
-
-    <script src = "hw7.js" id = "module"></script>
-    <script type = "text/javascript" src = "gl-matrix-min.js"></script>
-    
+    <input id="slider1" type="range" min="-100" max="100" />
+    <input id="slider2" type="range" min="-100" max="100" />
+    <script type="text/javascript" src="gl-matrix-min.js"></script>
+    <script src="hw7.js" id="module"></script>
+  </body>
 </html>
