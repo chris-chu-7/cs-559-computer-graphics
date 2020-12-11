@@ -66,10 +66,72 @@ function start() {
     }
 
     //attach shaders and link
+    var shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+    if(!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)){
+        alert("Couldn't  initialize shaders");
+    }
+    gl.useProgram(shaderProgram);
+
+    //set up communication to pass vertex shader positions and colors as attributes
+    shaderProgram.PositionAttribute = gl.getAttribLocation(shaderProgram, "vPosition");
+    gl.enableVertexAttribArray(shaderProgram.PositionAttribute);
+    shaderProgram.PositionAttribute = gl.getAttribLocation(shaderProgram, "vColor");
+    gl.enableVertexAttribArray(shaderProgram.ColorAttribute);
 
 
+    //give access to the matrix uniform
+    shaderProgram.MVPmatrix = gl.getUniformLocation(shaderProgram, "uMVP");
 
+    //DATA
+     // vertex positions
+     var vertexPos = new Float32Array(
+        [  1, 1, 1,  -1, 1, 1,  -1,-1, 1,   1,-1, 1,
+           1, 1, 1,   1,-1, 1,   1,-1,-1,   1, 1,-1,
+           1, 1, 1,   1, 1,-1,  -1, 1,-1,  -1, 1, 1,
+          -1, 1, 1,  -1, 1,-1,  -1,-1,-1,  -1,-1, 1,
+          -1,-1,-1,   1,-1,-1,   1,-1, 1,  -1,-1, 1,
+           1,-1,-1,  -1,-1,-1,  -1, 1,-1,   1, 1,-1 ]);
 
+    // vertex colors
+    var vertexColors = new Float32Array(
+        [  0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1,
+           1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0,
+           0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0,
+           1, 1, 0,   1, 1, 0,   1, 1, 0,   1, 1, 0,
+           1, 0, 1,   1, 0, 1,   1, 0, 1,   1, 0, 1,
+           0, 1, 1,   0, 1, 1,   0, 1, 1,   0, 1, 1 ]);
+    
+    // element index array
+    var triangleIndices = new Uint8Array(
+        [  0, 1, 2,   0, 2, 3,    // front
+           4, 5, 6,   4, 6, 7,    // right
+           8, 9,10,   8,10,11,    // top
+           12,13,14,  12,14,15,    // left
+           16,17,18,  16,18,19,    // bottom
+	   20,21,22,  20,22,23 ]); // back
+
+    // we need to put the vertices into a buffer so we can
+    // block transfer them to the graphics hardware
+    var trianglePosBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, trianglePosBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertexPos, gl.STATIC_DRAW);
+    trianglePosBuffer.itemSize = 3;
+    trianglePosBuffer.numItems = 24;
+    
+    // a buffer for colors
+    var colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertexColors, gl.STATIC_DRAW);
+    colorBuffer.itemSize = 3;
+    colorBuffer.numItems = 24;
+
+    // a buffer for indices
+    var indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, triangleIndices, gl.STATIC_DRAW);  
 
 
 
