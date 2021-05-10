@@ -1,5 +1,5 @@
 # cs-559-computer-graphics
-These are my projects for Computer Graphics
+These are my projects for Computer Graphics Class - CS 559.
 
 1. Move a shape up and down using a slider. 
 2. Create a moving Object, or clock.
